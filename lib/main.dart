@@ -24,8 +24,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
+      body: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) => [
           SliverAppBar(
             snap: true, // 튕기듯이 나오는 효과.
             floating: true,
@@ -36,52 +36,55 @@ class HomePage extends StatelessWidget {
               child: Center(
                 child: Text("FlexibleSpace", style: TextStyle(fontSize: 50)),
               ),
-            )
-          ),
-          SliverAppBar(
-            title: Text("SliverAppbar"),
-            pinned: true,
-          ),
-          SliverToBoxAdapter(
-            child: Container(
-              color: Colors.red,
-              height: 200,
-            ),
-          ),
-          SliverFixedExtentList(
-            itemExtent: 100, delegate: SliverChildBuilderDelegate(
-            childCount: 50,
-            (context, index) {
-              if(index % 4 == 0 && index != 0) {
-                return Ad((index/4).toInt());
-              } else {
-                return Diary(index);
-              }
-            },
-          )),
-          SliverToBoxAdapter(
-            child: Container(
-              color: Colors.red,
-              height: 200,
             ),
           ),
         ],
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              title: Text("SliverAppbar"),
+              pinned: true,
+            ),
+            SliverToBoxAdapter(
+              child: Container(
+                height: 200.0,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 10,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      width: 200.0,
+                      child: Container(
+                        child: Text('data'),
+                        alignment: Alignment.center,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            SliverFixedExtentList(
+              itemExtent: 100,
+              delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                  if (index % 4 == 0 && index != 0) {
+                    return Ad((index / 4).toInt());
+                  } else {
+                    return Diary(index);
+                  }
+                },
+                childCount: 50,
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Container(
+                color: Colors.red,
+                height: 200,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
-
-  SliverList buildSliverList() {
-    return SliverList(delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            return Container(
-              height: 50,
-              alignment: Alignment.center,
-              color: Colors.lightBlue[100 * (index % 9)],
-              child: Text("List item $index"),
-            );
-          },
-        ));
-  }
 }
-
-
